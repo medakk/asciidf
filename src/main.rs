@@ -3,6 +3,7 @@ mod util;
 
 use term_size;
 use nalgebra_glm::{Vec2, Vec3, length2};
+extern crate nalgebra_glm as glm;
 
 use renderer::{Pixel, Pixels};
 use util::sdf;
@@ -19,7 +20,6 @@ fn main() {
 fn shade(uniforms: &renderer::Uniforms, frag_coord: &Vec2) -> Pixel {
     let u = frag_coord.x / uniforms.resolution.x;
     let v = 1.0 - frag_coord.y / uniforms.resolution.y;
-    let chars = ['≣', '∞'];
 
     let mut pixel = Pixel::blank();
 
@@ -30,11 +30,11 @@ fn shade(uniforms: &renderer::Uniforms, frag_coord: &Vec2) -> Pixel {
         pixel.color = a*v + b*(1.0 - v);
         if (u*38.0) as isize % 2 == 0 { pixel.color *= 0.4; }
         if (v*18.0) as isize % 2 == 0 { pixel.color *= 0.8; }
-        pixel.ch = chars[0];
-        // if length2(&(uv - Vec2::new(0.5, 0.5))) < 0.08 { pixel.ch = chars[1]; }
+        pixel.ch = '≣';
     }
 
     // Raymarch
+    let shades = ['░', '▒', '▓'];
     {
         let dir = ray_dir(60.0, &uniforms.resolution, frag_coord);
         let eye = Vec3::new(0.0, 3.0, 10.5);
@@ -45,8 +45,16 @@ fn shade(uniforms: &renderer::Uniforms, frag_coord: &Vec2) -> Pixel {
             let p = eye + t * &dir;
             let hit = sdf::map(&p);
             if hit.x < 1e-1  {
-                pixel.color = Vec3::new(1.0, 1.0, 1.0);
-                pixel.ch = chars[1];
+                let light_pos = Vec3::new(40.0, 28.0, 20.0);
+                pixel.color = sdf::shade(&p, hit.y, &light_pos, &-dir, sdf::map);
+
+                let light_pos = Vec3::new(-40.0, 4.0, 8.0);
+                pixel.color += sdf::shade(&p, hit.y, &light_pos, &-dir, sdf::map);
+
+                let mag = glm::magnitude2(&glm::min(&pixel.color, 1.0));
+                let mag_nor = mag / 1.7320508;
+                let shades_idx = ((mag_nor.sqrt()* shades.len() as f32) as usize).min(shades.len()-1);
+                pixel.ch = shades[shades_idx];
             } else {
                 t += hit.x;
             }

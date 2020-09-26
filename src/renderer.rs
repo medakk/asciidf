@@ -1,6 +1,8 @@
 use nalgebra_glm::{Vec3, Vec2, U8Vec3};
 use colored::*;
 
+//TODO: Think about wasm API
+
 #[derive(Clone, Copy)]
 pub struct Pixel {
     pub ch: char,
@@ -49,8 +51,8 @@ impl Pixels {
         for y in 0..self.height {
             for x in 0..self.width {
                 let uv = Vec2::new(
-                    (x as f32 + 0.5),
-                    (y as f32 + 0.5),
+                    x as f32 + 0.5,
+                    (self.height - y) as f32 + 0.5,
                 );
                 //TODO: How to account for each rendered char being taller than wider?
                 let uniforms = Uniforms {
