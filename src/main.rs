@@ -53,7 +53,7 @@ fn shade(uniforms: &renderer::Uniforms, frag_coord: &Vec2) -> Pixel {
 
                 let mag = glm::magnitude2(&glm::min(&pixel.color, 1.0));
                 let mag_nor = mag / 1.7320508;
-                let shades_idx = ((mag_nor.sqrt()* shades.len() as f32) as usize).min(shades.len()-1);
+                let shades_idx = ((mag_nor.cbrt()* shades.len() as f32) as usize).min(shades.len()-1);
                 pixel.ch = shades[shades_idx];
             } else {
                 t += hit.x;
