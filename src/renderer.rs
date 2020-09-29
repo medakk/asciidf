@@ -1,8 +1,6 @@
 use nalgebra_glm::{Vec3, Vec2, U8Vec3};
 use colored::*;
 
-//TODO: Think about wasm API
-
 #[derive(Clone, Copy)]
 pub struct Pixel {
     pub ch: char,

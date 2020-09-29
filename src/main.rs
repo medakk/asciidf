@@ -2,7 +2,7 @@ mod renderer;
 mod util;
 
 use term_size;
-use nalgebra_glm::{Vec2, Vec3, length2};
+use nalgebra_glm::{Vec2, Vec3};
 extern crate nalgebra_glm as glm;
 
 use renderer::{Pixel, Pixels};
