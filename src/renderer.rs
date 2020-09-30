@@ -1,10 +1,14 @@
+use wasm_bindgen::prelude::*;
+
 use nalgebra_glm::{Vec3, Vec2, U8Vec3};
 use colored::*;
 
+#[wasm_bindgen]
 #[derive(Clone, Copy)]
+#[repr(C)]
 pub struct Pixel {
-    pub ch: char,
-    pub color: Vec3,
+    ch: char,
+    color: Vec3,
 }
 
 impl Pixel {
@@ -79,6 +83,26 @@ impl Pixels {
             }
             println!();
         }
+    }
+
+    pub fn html(&self) -> String {
+        let mut s = String::with_capacity((self.width+1) * self.height);
+        for y in 0..self.height {
+            for x in 0..self.width {
+                let idx = y * self.width + x;
+                let pixel = &self.data[idx];
+                let c_u8 = U8Vec3::new(
+                    (pixel.color[0] * 255.0) as u8, // rust will auto clamp
+                    (pixel.color[1] * 255.0) as u8,
+                    (pixel.color[2] * 255.0) as u8,
+                );
+                s.push_str(format!("<span style=\"color: rgb({}, {}, {})\">", c_u8[0], c_u8[1], c_u8[2]).as_str());
+                s.push(pixel.ch);
+                s.push_str("</span>");
+            }
+            s.push('\n');
+        }
+        s
     }
 }
 

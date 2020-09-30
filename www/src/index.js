@@ -1,3 +1,8 @@
-import { greet } from 'asciidf';
+import { do_thing } from 'asciidf';
 
-greet('hi');
+
+const s = do_thing();
+
+const pre = document.createElement('pre');
+pre.innerHTML = s;
+document.body.appendChild(pre);

@@ -4,11 +4,18 @@ version = "0.1.0"
 authors = ["Karthik Karanth <karanth.karthik@gmail.com>"]
 edition = "2018"
 
+
 [lib]
-crate-type = ["cdylib"]
+path = "src/lib.rs"
+# [lib.'cfg(not(target_arch="wasm32"))']
+crate-type = ["cdylib", "rlib"]
+
+[[bin]]
+name = "asciidf-bin"
+path = "src/bin.rs"
 
 [dependencies]
 nalgebra-glm = "0.8.0"
 colored = "2"
 term_size = "0.3.2"
-wasm-bindgen = "0.2"
+wasm-bindgen = "=0.2.60" # Because of this bug https://github.com/rustwasm/wasm-pack/issues/886

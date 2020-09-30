@@ -4,6 +4,7 @@
 
 // SDF Functions
 #[allow(dead_code)]
+#[allow(non_snake_case)]
 pub mod sdf {
     extern crate nalgebra_glm as glm;
     use nalgebra_glm::{Vec2, Vec3};
@@ -60,7 +61,7 @@ pub mod sdf {
         let mut n = vec3(0.0, 0.0, 0.0);
         for i in 0..4 {
             let e = 0.5773*(2.0*&vec3((((i+3)>>1)&1) as f32,((i>>1)&1) as f32,(i&1) as f32) - &vec3(1.0, 1.0, 1.0));
-            n += e*map(&(p+e*h)).x;
+            n += e*map_func(&(p+e*h)).x;
         }
         glm::normalize(&n)
     }
