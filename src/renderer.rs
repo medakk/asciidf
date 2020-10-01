@@ -1,4 +1,6 @@
+use rayon::prelude::*;
 use wasm_bindgen::prelude::*;
+use std::io::{stdout, Write};
 
 use nalgebra_glm::{Vec3, Vec2, U8Vec3};
 use colored::*;
@@ -63,26 +65,26 @@ impl Pixels {
     }
 
     pub fn update(&mut self, shader_func: Shader) {
-        for y in 0..self.height {
-            for x in 0..self.width {
-                let uv = Vec2::new(
-                    x as f32 + 0.5,
-                    (self.height - y) as f32 + 0.5,
-                );
-                //TODO: How to account for each rendered char being taller than wider?
-                let uniforms = Uniforms {
-                    resolution: Vec2::new(self.width as f32, self.height as f32),
-                    frames: self.frames,
-                };
-                let idx = y*self.width + x;
-                self.data[idx] = shader_func(&uniforms, &uv);
-            }
-        }
+        self.data = (0..self.width*self.height).into_par_iter().map(|idx| {
+            let x = idx % self.width;
+            let y = idx / self.width;
+            let uv = Vec2::new(
+                x as f32 + 0.5,
+                (self.height - y) as f32 + 0.5,
+            );
+            //TODO: How to account for each rendered char being taller than wider?
+            let uniforms = Uniforms {
+                resolution: Vec2::new(self.width as f32, self.height as f32),
+                frames: self.frames,
+            };
+            shader_func(&uniforms, &uv)
+        }).collect();
 
         self.frames += 1;
     }
 
     pub fn draw(&self) {
+        let mut stdout = stdout();
         for y in 0..self.height {
             for x in 0..self.width {
                 let idx = y*self.width + x;
@@ -95,10 +97,11 @@ impl Pixels {
 
                 //TODO: Is this the best way?
                 let s = pixel.ch.to_string().truecolor(c_u8[0], c_u8[1], c_u8[2]);
-                print!("{}", s);
+                stdout.write_all(s.to_string().as_bytes()).unwrap();
             }
-            println!();
+            stdout.write_all("\n".as_bytes()).unwrap();
         }
+        stdout.flush().unwrap();
     }
 
     pub fn html(&self) -> String {

@@ -19,3 +19,4 @@ nalgebra-glm = "0.8.0"
 colored = "2"
 term_size = "0.3.2"
 wasm-bindgen = "=0.2.60" # Because of this bug https://github.com/rustwasm/wasm-pack/issues/886
+rayon = "1.3.0"
