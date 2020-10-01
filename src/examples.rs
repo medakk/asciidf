@@ -34,10 +34,11 @@ pub fn simple_sdf(uniforms: &renderer::Uniforms, frag_coord: &Vec2) -> Pixel {
             let p = eye + t * &dir;
             let hit = sdf::map(&p);
             if hit.x < 1e-1  {
-                let light_pos = Vec3::new(40.0, 28.0, 20.0);
+                let frames = uniforms.frames as f32 / 10.0;
+                let light_pos = Vec3::new(40.0 * frames.cos(), 28.0 * frames.sin(), 20.0);
                 color = sdf::shade(&p, hit.y, &light_pos, &-dir, sdf::map);
 
-                let light_pos = Vec3::new(-40.0, 4.0, 8.0);
+                let light_pos = Vec3::new(-40.0 * frames.cos(), 4.0 * frames.sin(), 8.0);
                 color += sdf::shade(&p, hit.y, &light_pos, &-dir, sdf::map);
 
                 let mag = glm::magnitude2(&glm::min(&color, 1.0));

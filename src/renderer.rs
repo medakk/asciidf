@@ -31,10 +31,12 @@ pub struct Pixels {
     width: usize,
     height: usize,
     data: Vec<Pixel>,
+    frames: usize,
 }
 
 pub struct Uniforms {
-    pub resolution: Vec2
+    pub resolution: Vec2,
+    pub frames: usize,
 }
 
 type Shader = fn (&Uniforms, &Vec2) -> Pixel;
@@ -46,7 +48,18 @@ impl Pixels {
             width,
             height,
             data,
+            frames: 0,
         }
+    }
+
+    pub fn resize(&mut self, width: usize, height: usize) {
+        if self.width == width && self.height == height {
+            return;
+        }
+
+        self.width = width;
+        self.height = height;
+        self.data = vec![Pixel::blank(); width*height];
     }
 
     pub fn update(&mut self, shader_func: Shader) {
@@ -58,12 +71,15 @@ impl Pixels {
                 );
                 //TODO: How to account for each rendered char being taller than wider?
                 let uniforms = Uniforms {
-                    resolution: Vec2::new(self.width as f32, self.height as f32)
+                    resolution: Vec2::new(self.width as f32, self.height as f32),
+                    frames: self.frames,
                 };
                 let idx = y*self.width + x;
                 self.data[idx] = shader_func(&uniforms, &uv);
             }
         }
+
+        self.frames += 1;
     }
 
     pub fn draw(&self) {
