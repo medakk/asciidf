@@ -17,6 +17,7 @@ pub fn simple_sdf(uniforms: &renderer::Uniforms, frag_coord: &Vec2) -> Pixel {
         let a = Vec3::new(0.2, 0.7, 0.8);
         let b = Vec3::new(0.0, 0.9, 0.0);
         color = a*v + b*(1.0 - v);
+
         if (u*38.0) as isize % 2 == 0 { color *= 0.4; }
         if (v*18.0) as isize % 2 == 0 { color *= 0.8; }
         ch = '≣';

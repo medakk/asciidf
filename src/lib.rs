@@ -12,3 +12,5 @@ pub fn do_thing() -> String {
 
     pixels.html()
 }
+
+pub use renderer::Pixels;
