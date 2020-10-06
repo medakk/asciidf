@@ -6,6 +6,7 @@ use std::io::{stdout, Write};
 
 use nalgebra_glm::{Vec3, Vec2, U8Vec3};
 use colored::*;
+use ncurses;
 
 //TODO REMOVE
 use crate::examples::simple_sdf;
@@ -97,6 +98,23 @@ impl Pixels {
             stdout.write_all("\n".as_bytes()).unwrap();
         }
         stdout.flush().unwrap();
+    }
+
+    pub fn ncurses_draw(&self) {
+        for y in 0..self.height {
+            for x in 0..self.width {
+                let idx = y*self.width + x;
+                let pixel = &self.data[idx];
+                let c_u8 = U8Vec3::new(
+                    (pixel.color[0] * 255.0) as u8, // rust will auto clamp
+                    (pixel.color[1] * 255.0) as u8,
+                    (pixel.color[2] * 255.0) as u8,
+                );
+
+                ncurses::mvprintw(y as i32, x as i32, &pixel.ch.to_string());
+            }
+        }
+        ncurses::refresh();
     }
 
 }
