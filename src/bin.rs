@@ -9,7 +9,7 @@ fn main() {
     let (w, h) = term_size::dimensions().unwrap_or((137, 28));
     let mut pixels = renderer::Pixels::new(w, h-1);
 
-    const frame_time: f32 = 0.018;
+    const frame_time: f32 = 0.088;
     loop {
         let now = Instant::now();
 

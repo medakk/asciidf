@@ -1,4 +1,4 @@
-// Super useful references:
+// Most functions adapted from:
 // https://www.iquilezles.org/www/index.htm
 // http://jamie-wong.com/2016/07/15/ray-marching-signed-distance-functions/
 
@@ -9,8 +9,28 @@ pub mod sdf {
     extern crate nalgebra_glm as glm;
     use nalgebra_glm::{Vec2, Vec3};
 
+    pub fn mod_f32(x: f32, y: f32) -> f32 {
+        x - y * (x / y).floor()
+    }
+
+    pub fn clamp_f32(x: f32, a: f32, b: f32) -> f32 {
+        x.min(b).max(a)
+    }
+
     pub fn mix_f32(a: f32, b: f32, t: f32) -> f32 {
         t*a + (1.0 - t) * b
+    }
+
+    pub fn mix_vec2(a: &Vec2, b: &Vec2, t: f32) -> Vec2 {
+        (1.0 - t)*a + t * b
+    }
+
+    pub fn mod_vec3(x: &Vec3, y: f32) -> Vec3 {
+        x - glm::floor(&(x / y))
+    }
+
+    pub fn mod_vec3_vec3(x: &Vec3, y: &Vec3) -> Vec3 {
+        x - y.component_mul(&glm::floor(&x.component_div(y)))
     }
 
     pub fn vec2(x: f32, y: f32) -> Vec2 {
@@ -42,6 +62,13 @@ pub mod sdf {
         } else {
             s2.clone()
         }
+    }
+
+    pub fn smooth_sub(s1: &Vec2, s2: &Vec2, k: f32) -> Vec2 {
+        let h = clamp_f32(0.5 - 0.5*(s2.x+s1.x)/k, 0.0, 1.0);
+        let mut v = mix_vec2( s2,&vec2(-s1.x, s1.y), h );
+        v.x += k*h*(1.0-h);
+        v
     }
 
     // get ray direction
@@ -90,10 +117,16 @@ pub mod sdf {
     pub fn map(p: &Vec3) -> Vec2 {
         let mut s = vec2(1e10, 0.0);
 
-        s = union(&s, &vec2(sphere(&(p - vec3(0.0, 5.3, 0.0)), 4.3), 1.0));
-        s = union(&s, &vec2(boxy(&(p - vec3(18.0, 2.3, 0.0)), &vec3(1.0, 1.0, 1.0)), 1.0));
-        s = union(&s, &vec2(plane(&p), 0.2));
+        // for repetition
+        {
+            let c = vec3(400.2, 10000.0, 30.0);
+            let p2 = mod_vec3_vec3(&(p + 0.5 * &c), &c) - 0.5 * &c;
 
+            s = union(&s, &vec2(sphere(&(&p2 - &vec3(0.0, 3.0, 0.0)), 3.3), 1.0));
+            s = smooth_sub(&s, &vec2(boxy(&(&p2 - &vec3(0.0, 3.0, 0.0)),&vec3(3.0, 3.0, 3.0)), 1.0), 0.5);
+        }
+
+        s = union(&s, &vec2(plane(&p), 0.2));
         s
     }
 }
