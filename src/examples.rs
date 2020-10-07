@@ -58,7 +58,7 @@ fn box_minus_sphere_map(p: &Vec3) -> Vec2 {
 
     // for repetition
     {
-        let c = vec3(400.2, 10000.0, 30.0);
+        let c = vec3(20.2, 10000.0, 30.0);
         let p2 = mod_vec3_vec3(&(p + 0.5 * &c), &c) - 0.5 * &c;
 
         s = union(&s, &vec2(sphere(&(&p2 - &vec3(0.0, 3.0, 0.0)), 3.3), 1.0));

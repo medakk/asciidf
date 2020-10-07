@@ -142,10 +142,16 @@ impl Pixels {
         s
     }
 
-    pub fn hacky_update(&mut self) {
-        self.update(box_minux_sphere);
+    // yeah...this is just so wasm can just specify a "shader" as a name. bad bad bad
+    pub fn update_with_example(&mut self, example: &str) {
+        if example == "box_minus_sphere" {
+            self.update(box_minux_sphere);
+        } else {
+            panic!("unknown example shader: {}", example)
+        }
     }
 
+    // in case wasm wants the buffer
     pub fn write_to_buffer(&self, fetcher: &mut Fetcher)  {
         fetcher.buffer.resize(self.width * self.height * 2, 0);
 
