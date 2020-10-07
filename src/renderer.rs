@@ -8,7 +8,7 @@ use nalgebra_glm::{Vec3, Vec2, U8Vec3};
 use colored::*;
 
 //TODO REMOVE
-use crate::examples::simple_sdf;
+use crate::examples::box_minux_sphere;
 
 #[wasm_bindgen]
 #[derive(Clone, Copy)]
@@ -143,7 +143,7 @@ impl Pixels {
     }
 
     pub fn hacky_update(&mut self) {
-        self.update(simple_sdf);
+        self.update(box_minux_sphere);
     }
 
     pub fn write_to_buffer(&self, fetcher: &mut Fetcher)  {

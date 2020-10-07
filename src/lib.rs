@@ -8,7 +8,7 @@ pub mod renderer;
 pub fn do_thing() -> String {
     let (w, h) = (200, 40);
     let mut pixels = renderer::Pixels::new(w, h-1);
-    pixels.update(examples::simple_sdf);
+    pixels.update(examples::box_minux_sphere);
 
     pixels.html()
 }

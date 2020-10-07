@@ -112,21 +112,4 @@ pub mod sdf {
 
         kd*diff + ks*spec
     }
-
-    //TODO: abstract out
-    pub fn map(p: &Vec3) -> Vec2 {
-        let mut s = vec2(1e10, 0.0);
-
-        // for repetition
-        {
-            let c = vec3(400.2, 10000.0, 30.0);
-            let p2 = mod_vec3_vec3(&(p + 0.5 * &c), &c) - 0.5 * &c;
-
-            s = union(&s, &vec2(sphere(&(&p2 - &vec3(0.0, 3.0, 0.0)), 3.3), 1.0));
-            s = smooth_sub(&s, &vec2(boxy(&(&p2 - &vec3(0.0, 3.0, 0.0)),&vec3(3.0, 3.0, 3.0)), 1.0), 0.5);
-        }
-
-        s = union(&s, &vec2(plane(&p), 0.2));
-        s
-    }
 }

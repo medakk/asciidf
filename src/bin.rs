@@ -15,7 +15,7 @@ fn main() {
 
         let (w, h) = term_size::dimensions().unwrap_or((137, 28));
         pixels.resize(w, h);
-        pixels.update(examples::simple_sdf);
+        pixels.update(examples::box_minux_sphere);
         pixels.draw();
 
         // std::thread::sleep causes weird rendering issues, so we busy wait :(
